@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="abcjs-audio.css"/>
+
+	<link rel="icon" href="favicon.ico" type="image/x-icon"/>
+	<title>16th Note Snare Permutations</title>
+
+	<style>
+		main {
+			max-width: 700px;
+			margin: 0 auto;
+		}
+		.row {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+		}
+		.status {
+			padding: 2px 10px 10px 10px;
+			background-color: #f0f0f0;
+			width:250px;
+		}
+        @media (prefers-color-scheme: dark) {
+            .status {
+                background-color: #000000;
+            }
+        }
+		.abcjs-highlight {
+		    color: #ff0040
+		}
+	</style>
+
+	<script src="abcjs-basic.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	
+var abcRoot = "X:1\n"+
+"%%stretchlast 1\n" +
+"%%percmap D  pedal-hi-hat x\n" +
+"%%percmap F  bass-drum-1\n" +
+"%%percmap E  acoustic-bass-drum\n" +
+"%%percmap G  low-floor-tom\n" +
+"%%percmap A  high-floor-tom\n" +
+"%%percmap B  low-tom\n" +
+"%%percmap ^B tambourine   triangle\n" +
+"%%percmap c  acoustic-snare\n" +
+"%%percmap _c electric-snare\n" +
+"%%percmap ^c low-wood-block   triangle\n" +
+"%%percmap =c side-stick x\n"+
+"%%percmap d  low-tom\n" +
+"%%percmap =d  low-mid-tom harmonic\n" +
+"%%percmap ^d hi-wood-block    triangle\n" +
+"%%percmap e  hi-mid-tom\n" +
+"%%percmap ^e cowbell      triangle\n" +
+"%%percmap f  high-tom\n" +
+"%%percmap ^f ride-cymbal-1\n" +
+"%%percmap =f ride-bell harmonic\n" +
+"%%percmap g  closed-hi-hat x\n" +
+"%%percmap ^g open-hi-hat x\n" +
+"%%percmap a  crash-cymbal-1  x\n" +
+"%%percmap ^a open-triangle     triangle\n" +
+"Q:1/4=60\n"+
+"K:C perc\n"
+
+var dots= "\"1)\"c z z z|"+
+"\"2)\"z c z z|"+
+"\"3)\"z z c z|"+
+"\"4)\"z z z c|"+
+"\"5)\"c c z z|"+
+"\"6)\"c z c z|"+
+"\"7)\"c z z c|"+
+"\"8)\"z c c z|"+
+"\"9)\"z c z c|"+
+"\"10)\"z z c c|"+
+"\"11)\"c c c z|"+
+"\"12)\"c c z c|"+
+"\"13)\"c z c c|"+
+"\"14)\"z c c c|"+
+"\"15)\"c c c c|"
+
+var oneBar= "M:1/4\n"+"L:1/16\n"+"V:ALL stem=up\n"+
+"\"1)\"c4|\n"+
+"\"2)\"zc3|\n"+
+"\"3)\"z2c2|\n"+
+"\"4)\"z3c|"+
+"\"5)\"cc3|"+
+"\"6)\"c2c2|"+
+"\"7)\"c3c|"+
+"\"8)\"zcc2|"+
+"\"9)\"zc2c|"+
+"\"10)\"z2cc|"+
+"\"11)\"cccz|"+
+"\"12)\"cc2c|"+
+"\"13)\"c2cc|"+
+"\"14)\"zccc|"+
+"\"15)\"cccc|"
+
+var snare= "M:2/4\n"+"L:1/8\n"+
+"\"1)\"" +
+"gg gg &"+
+"F2 c2|\n"+
+"\"2)\"" +
+"gg gg &"+
+"F2 z/c3/2|\n"+
+"\"3)\"" +
+"gg gg &"+
+"F2 zc|\n"+
+"\"4)\"" +
+"gg gg &"+
+"F2 z3/2c/|\n"+
+"\"5)\"" +
+"gg gg &"+
+"F2 c/c/z|\n"+
+"\"6)\"" +
+"gg gg &"+
+"F2 cc|\n "+
+"\"7)\"" +
+"gg gg &"+
+"F2 c3/2c/|\n"+
+"\"8)\"" +
+"gg gg &"+
+"F2 z/c/c|\n"+
+"\"9)\"" +
+"gg gg &"+
+"F2 z/cc/|\n"+
+"\"10)\"" +
+"gg gg &"+
+"F2 zc/c/|\n"+
+"\"11)\"" +
+"gg gg &"+
+"F2 c/c/c|\n"+
+"\"12)\"" +
+"gg gg &"+
+"F2 c/cc/|\n"+
+"\"13)\"" +
+"gg gg &"+
+"F2 cc/c/|\n"+
+"\"14)\"" +
+"gg gg &"+
+"F2 z/c/c/c/|\n"+
+"\"15)\"" +
+"gg gg &"+
+"F2 c/c/c/c/|\n"
+
+abc=abc+oneBar
+
+function CursorControl(rootSelector) {
+	var self = this;
+
+	self.rootSelector = rootSelector; // This is the same selector as the renderAbc call uses.
+
+	self.removeSelection = function() {
+		// Unselect any previously selected notes.
+		var lastSelection = document.querySelectorAll(self.rootSelector + " .abcjs-highlight");
+		for (var k = 0; k < lastSelection.length; k++)
+			lastSelection[k].classList.remove("abcjs-highlight");
+	};
+
+	self.onFinished = function() {
+			self.removeSelection();
+	}
+
+	self.onEvent = function(ev) {
+
+		// This is called every time a note or a rest is reached and contains the coordinates of it.
+		if (ev.measureStart && ev.left === null)
+			return; // this was the second part of a tie across a measure line. Just ignore it.
+
+		self.removeSelection();
+
+		// Select the currently selected notes.
+		for (var i = 0; i < ev.elements.length; i++ ) {
+			var note = ev.elements[i];
+			for (var j = 0; j < note.length; j++) {
+				note[j].classList.add("abcjs-highlight");
+			}
+		}
+	};
+}
+
+var cursorControl = new CursorControl("#score");
+
+function onEvent(ev) {
+  if (ev)
+	cursorControl.onEvent(ev);
+  else
+	cursorControl.onFinished();
+}
+
+
+function load() {
+
+
+	// First draw the music - this supplies an object that has a lot of information about how to create the synth.
+	// NOTE: If you want just the sound without showing the music, use "*" instead of "paper" in the renderAbc call.
+	var visualObj = ABCJS.renderAbc("score", abc, { add_classes: true, oneSvgPerLine: true,
+		responsive: "wrap", staffwidth: 550, wrap: { minSpacing:1, maxSpacing:2.5, lastLineLimit: true, preferredMeasuresPerLine: 3 }, 
+		paddingbottom:0, paddingtop:0})[0];
+
+	// Adjust staff separation to make score more compact
+	var paper = document.querySelector("#score");
+	paperHeight = Math.ceil(paper.getAttribute("height"))
+	paper.setAttribute("height",paperHeight)
+	console.log("Changed paper height")
+
+
+	// This object is the class that will contain the buffer
+	var midiBuffer;
+
+	var startAudioButton = document.querySelector(".activate-audio");
+	var stopAudioButton = document.querySelector(".stop-audio");
+	var explanationDiv = document.querySelector(".suspend-explanation");
+	var statusDiv = document.querySelector(".status");
+
+	startAudioButton.addEventListener("click", function() {
+		startAudioButton.setAttribute("style", "display:none;");
+		explanationDiv.setAttribute("style", "opacity: 0;");
+		statusDiv.innerHTML = "<div>Testing browser</div>";
+		if (ABCJS.synth.supportsAudio()) {
+
+			stopAudioButton.setAttribute("style", "");
+
+			// An audio context is needed - this can be passed in for two reasons:
+			// 1) So that you can share this audio context with other elements on your page.
+			// 2) So that you can create it during a user interaction so that the browser doesn't block the sound.
+			// Setting this is optional - if you don't set an audioContext, then abcjs will create one.
+			window.AudioContext = window.AudioContext ||
+				window.webkitAudioContext ||
+				navigator.mozAudioContext ||
+				navigator.msAudioContext;
+			var audioContext = new window.AudioContext();
+			audioContext.resume().then(function () {
+				statusDiv.innerHTML += "<div>AudioContext resumed</div>";
+				// In theory the AC shouldn't start suspended because it is being initialized in a click handler, but iOS seems to anyway.
+
+				// This does a bare minimum so this object could be created in advance, or whenever convenient.
+				midiBuffer = new ABCJS.synth.CreateSynth();
+
+				var synthControl = new ABCJS.synth.SynthController();
+				synthControl.load("#control",
+					cursorControl,
+					{
+						displayLoop: true,
+						displayRestart: true,
+						displayPlay: true,
+						displayProgress: false,
+						displayWarp: true,
+						displayClock: true
+					}
+				);
+				statusDiv.innerHTML = "<div>Controller loaded</div>";
+				synthControl.disable(true);
+
+				// midiBuffer.init preloads and caches all the notes needed. There may be significant network traffic here.
+				return midiBuffer.init({
+					visualObj: visualObj,
+					audioContext: audioContext,
+					millisecondsPerMeasure: visualObj.millisecondsPerMeasure(),
+				}).then(function (response) {
+					synthControl.setTune(visualObj, false, {
+						drum: "dddd 76 77 77 77 60 30 30 30"
+					  }).then(function () {
+						document.querySelector(".abcjs-inline-audio").classList.remove("disabled");
+						console.log("Audio successfully loaded.");
+						statusDiv.innerHTML += "<div>Audio object has been initialized</div>";
+						// console.log(response); // this contains the list of notes that were loaded.
+						// midiBuffer.prime actually builds the output buffer.
+					}).catch(function (error) {
+						console.warn("Audio problem:", error);
+					});
+					return midiBuffer.prime();
+				}).then(function (response) {
+					statusDiv.innerHTML += "<div>Audio object has been primed (" + response.duration + " seconds).</div>";
+					statusDiv.innerHTML += "<div>status = " + response.status + "</div>";
+					// At this point, everything slow has happened. midiBuffer.start will return very quickly and will start playing very quickly without lag.
+					//midiBuffer.start();
+					//statusDiv.innerHTML += "<div>Audio started</div>";
+					return Promise.resolve();
+				}).catch(function (error) {
+					if (error.status === "NotSupported") {
+						stopAudioButton.setAttribute("style", "display:none;");
+						var audioError = document.querySelector(".audio-error");
+						audioError.setAttribute("style", "");
+					} else
+						console.warn("synth error", error);
+				});
+			});
+		} else {
+			var audioError = document.querySelector(".audio-error");
+			audioError.setAttribute("style", "");
+		}
+});
+
+	stopAudioButton.addEventListener("click", function() {
+		startAudioButton.setAttribute("style", "");
+		explanationDiv.setAttribute("style", "");
+		stopAudioButton.setAttribute("style", "display:none;");
+		if (midiBuffer)
+			midiBuffer.stop();
+	});
+
+	function startTimer() {
+		var timingCallbacks = new ABCJS.TimingCallbacks(visualObj, {
+			eventCallback: onEvent,
+			extraMeasuresAtBeginning: 1,
+			beatSubdivisions: 4
+		});
+		timingCallbacks.start();
+	}
+	
+//	document.querySelector(".activate-audio").addEventListener("click", startTimer);
+
+}
+
+function randomSnarePerms(num) {
+   abc = abcRoot + "M:2/4\n"+"L:1/8\n"
+   // Each permutation is one line with two header lines that we remove
+   perms = snare.split("\n").slice(2)
+   console.log(perms[0])
+   for (i=0;i<num;i++){
+      rand = Math.ceil(Math.random() * (15 - 1) + 1)-1;
+      console.log(rand)
+      chosen = perms[rand]
+	  console.log(chosen)
+	  if (i>0)
+	    abc = abc+"\n"
+	  abc = abc + chosen
+   }
+   return abc
+}
+
+var abc = randomSnarePerms(6)
+console.log(abc)
+
+	</script>
+</head>
+<body onload="load()">
+<main>
+  <header>
+  <h1>16th Note One Beat Permutations</h1>
+  </header>
+	<div class="container" style="width:50;">
+		<div id="control"></div>
+		<div id="score"></div>
+		<p class="suspend-explanation"></p>
+		<div class="row">
+			<div>
+				<button class="activate-audio">Activate Audio Context And Play</button>
+				<button class="stop-audio" style="display:none;">Stop Audio</button>
+				<div class='audio-error' style="display:none;">Audio is not supported in this browser.</div>
+			</div>
+			<div class="status" style="display:none;"></div>
+		</div>
+	</div>
+</main>
+</body>
+</html>

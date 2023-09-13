@@ -67,7 +67,7 @@ var abcRoot = "X:1\n"+
 
 var metric="M:4/4\n"+"L:1/8\n"
 
-var ostinato = "gg gg&"
+var ostinato = "gg gg gg gg&"
 
 var grooveComplete="F2 c2 FF c2"
 
@@ -142,7 +142,7 @@ function load() {
 	// First draw the music - this supplies an object that has a lot of information about how to create the synth.
 	// NOTE: If you want just the sound without showing the music, use "*" instead of "paper" in the renderAbc call.
 	var visualObj = ABCJS.renderAbc("score", abc, { add_classes: true, oneSvgPerLine: true,
-		responsive: "wrap", staffwidth: 550, wrap: { minSpacing:1, maxSpacing:2.5, lastLineLimit: true, preferredMeasuresPerLine: 3 }, 
+		responsive: "wrap", staffwidth: 400, wrap: { minSpacing:1, maxSpacing:2.5, lastLineLimit: true, preferredMeasuresPerLine: 2 }, 
 		paddingbottom:0, paddingtop:0})[0];
 
 	// Adjust staff separation to make score more compact
@@ -282,17 +282,25 @@ function randomSnareFill(numBeats,fillBeats) {
    return fillBar
 }
 
-function cutGroove(groove,numFillBeat) {
+function cut(groove,numFillBeat) {
    beatsPerBar = Number(metric.split("\n")[0].split(":")[1].trim().split("/")[0]);
    grooveBeats = groove.split(" ");
    restOfGroove = "";
    for (i=0;i<(grooveBeats.length-numFillBeat);i++) {
-      restOfGroove = restOfGroove + grooveBeats[i]
+      restOfGroove = restOfGroove + " " + grooveBeats[i]
    }
-   return restOfGroove+"\n"
+   return restOfGroove
 }
 
-var abc = abcRoot + metric + "V:ALL stem=up\n"+ostinato+cutGroove(grooveComplete,2)+randomSnareFill(2,fillBeatsRock);
+function grooveBars(numBars) {
+   result = "";
+   for (i=0;i<numBars;i++) {
+     result = result + ostinato+grooveComplete + "|\n"
+   }
+   return result
+}
+
+var abc = abcRoot + metric +grooveBars(3)+cut(ostinato,2)+"&"+cut(grooveComplete,2)+"\n"+randomSnareFill(2,fillBeatsRock)+"|";
 
 console.log(abc)
 

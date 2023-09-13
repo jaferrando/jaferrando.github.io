@@ -142,7 +142,7 @@ function load() {
 	// First draw the music - this supplies an object that has a lot of information about how to create the synth.
 	// NOTE: If you want just the sound without showing the music, use "*" instead of "paper" in the renderAbc call.
 	var visualObj = ABCJS.renderAbc("score", abc, { add_classes: true, oneSvgPerLine: true,
-		responsive: "wrap", staffwidth: 400, wrap: { minSpacing:1, maxSpacing:2.5, lastLineLimit: true, preferredMeasuresPerLine: 2 }, 
+		responsive: "wrap", staffwidth: 350, wrap: { minSpacing:1, maxSpacing:2.5, lastLineLimit: true, preferredMeasuresPerLine: 2 }, 
 		paddingbottom:0, paddingtop:0})[0];
 
 	// Adjust staff separation to make score more compact

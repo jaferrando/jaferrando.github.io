@@ -99,7 +99,7 @@ var oneBar= "M:1/4\n"+"L:1/16\n"+"V:ALL stem=up\n"+
 "\"14)\"zccc|"+
 "\"15)\"cccc|"
 
-var oneBeat= "\"1)\"" +
+var oneBeatAll= "\"1)\"" +
 "c2|\n"+
 "\"2)\"" +
 "z/c3/2|\n"+
@@ -127,6 +127,19 @@ var oneBeat= "\"1)\"" +
 "cc/c/|\n"+
 "\"14)\"" +
 "z/c/c/c/|\n"+
+"\"15)\"" +
+"c/c/c/c/|\n"
+
+var oneBeatPopRock= "\"5)\"" +
+"c/c/z|\n"+
+"\"6)\"" +
+"cc|\n "+
+"\"10)\"" +
+"zc/c/|\n"+
+"\"11)\"" +
+"c/c/c|\n"+
+"\"13)\"" +
+"cc/c/|\n"+
 "\"15)\"" +
 "c/c/c/c/|\n"
 
@@ -176,7 +189,7 @@ var snare= "\"1)\"" +
 "gg gg &"+
 "F2 c/c/c/c/|\n"
 
-var abc = abcRoot+ "M:1/4\n"+"L:1/8\n" + randomOneBeatPerms(4);
+var abc = abcRoot+ "M:1/4\n"+"L:1/8\n" + "V:ALL stem=up\n"+ randomOneBeatPerms(oneBeatAll,4);
 
 function CursorControl(rootSelector) {
 	var self = this;
@@ -354,11 +367,23 @@ function load() {
 //	document.querySelector(".activate-audio").addEventListener("click", startTimer);
 }
 
-function randomOneBeatPerms(num) {
+function getBeats(num) {
+    styleSelected = document.getElementById('style').value;
+	var beats = null
+	if (styleSelected == "All")
+	    beats = oneBeatAll;
+	else
+	    beats = oneBeatPopRock;
+	return randomOneBeatPerms(beats,num)
+}
+
+function randomOneBeatPerms(beats,num) {
    result = ""
-   perms = oneBeat.split("\n")
+   perms = beats.split("\n")
+   // The list ends with a /n so it gets added when the last element is chosen too
+   total = perms.length-1
    for (i=0;i<num;i++){
-      rand = Math.ceil(Math.random() * (15 - 1) + 1)-1;
+      rand = Math.ceil(Math.random() * (total - 1) + 1)-1;
       chosen = perms[rand]
 	  if (i>0)
 	    result = result+"\n"
@@ -369,27 +394,32 @@ function randomOneBeatPerms(num) {
 
 $(document).ready(function(){
   $('#barCount').bind('keyup input', function(){
-	  abc = abcRoot+ "M:1/4\n"+"L:1/8\n" + randomOneBeatPerms($('#barCount').val());
-	  console.log(abc)
+	  abc = abcRoot+ "M:1/4\n"+"L:1/8\n" + "V:ALL stem=up\n" +getBeats($('#barCount').val());
 	  const scoreDiv = document.getElementById("score");
 	  scoreDiv.innerHTML = "";
 	  load();
+  	  initAudio();
   });
   $("#metronome").change(function(e) {
-      console.log("ALERT")
       if (document.getElementById('metronome').checked) {
 	     metronome = "dddd 76 77 77 77 60 30 30 30";
-		 console.log("1");
 	  } else  {
 	     metronome = "";
-		 console.log("2");
 	  }
 	  const scoreDiv = document.getElementById("score");
 	  scoreDiv.innerHTML = "";
 	  load();
 	  initAudio();
-  }) 
+  });
+  $("#style").change(function(e) {
+    abc = abcRoot+ "M:1/4\n"+"L:1/8\n" + "V:ALL stem=up\n"+getBeats($('#barCount').val());
+	const scoreDiv = document.getElementById("score");
+	scoreDiv.innerHTML = "";
+	load();
+    initAudio();
+  })
 });
+
 
 	</script>
 </head>
@@ -399,11 +429,15 @@ $(document).ready(function(){
   <h1>16th Note One Beat Permutations Combinations</h1>
   </header>
     <div classs="container">
-	    Number of Bars: <input id="barCount" type="number" name="points" step="1" value="4" style="width:25px;"></input>
+	    Number of Bars: <input id="barCount" type="number" name="points" step="1" value="4" style="width:50px;"></input>
 		Metronome: <input id="metronome" type="checkbox" checked="true">
+		Style: <select id = "style">
+			<option>Pop&ampRock</option>
+			<option selected="selected">All</option>
+		</select>
     </div> 
 
-	<div class="container" style="width:50;">
+	<div class="container">
 		<div id="control"></div>
 		<div id="score"></div>
 		<p class="suspend-explanation"></p>

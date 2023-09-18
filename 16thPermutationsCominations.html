@@ -233,7 +233,6 @@ var visualObj = null;
 
 function initAudio() {
 	var startAudioButton = document.querySelector(".activate-audio");
-	var stopAudioButton = document.querySelector(".stop-audio");
 	var explanationDiv = document.querySelector(".suspend-explanation");
 	var statusDiv = document.querySelector(".status");
 
@@ -241,8 +240,6 @@ function initAudio() {
 	explanationDiv.setAttribute("style", "opacity: 0;");
 	statusDiv.innerHTML = "<div>Testing browser</div>";
 	if (ABCJS.synth.supportsAudio()) {
-
-		stopAudioButton.setAttribute("style", "");
 
 		// An audio context is needed - this can be passed in for two reasons:
 		// 1) So that you can share this audio context with other elements on your page.
@@ -281,7 +278,6 @@ function initAudio() {
 				audioContext: audioContext,
 				millisecondsPerMeasure: visualObj.millisecondsPerMeasure(),
 			}).then(function (response) {
-				console.log(metronome)
 				synthControl.setTune(visualObj, false, {
 					drum: metronome
 				  }).then(function () {
@@ -303,7 +299,6 @@ function initAudio() {
 				return Promise.resolve();
 			}).catch(function (error) {
 				if (error.status === "NotSupported") {
-					stopAudioButton.setAttribute("style", "display:none;");
 					var audioError = document.querySelector(".audio-error");
 					audioError.setAttribute("style", "");
 				} else
@@ -341,19 +336,10 @@ function load() {
 	var midiBuffer;
 
 	var startAudioButton = document.querySelector(".activate-audio");
-	var stopAudioButton = document.querySelector(".stop-audio");
 	var explanationDiv = document.querySelector(".suspend-explanation");
 	var statusDiv = document.querySelector(".status");
 
 	startAudioButton.addEventListener("click", initAudio);
-
-	stopAudioButton.addEventListener("click", function() {
-		startAudioButton.setAttribute("style", "");
-		explanationDiv.setAttribute("style", "");
-		stopAudioButton.setAttribute("style", "display:none;");
-		if (midiBuffer)
-			midiBuffer.stop();
-	});
 
 	function startTimer() {
 		var timingCallbacks = new ABCJS.TimingCallbacks(visualObj, {
@@ -443,8 +429,7 @@ $(document).ready(function(){
 		<p class="suspend-explanation"></p>
 		<div class="row">
 			<div>
-				<button class="activate-audio">Activate Audio Context And Play</button>
-				<button class="stop-audio" style="display:none;">Stop Audio</button>
+				<button class="activate-audio">Enable Player</button>
 				<div class='audio-error' style="display:none;">Audio is not supported in this browser.</div>
 			</div>
 			<div class="status" style="display:none;"></div>

@@ -10,9 +10,29 @@
 	<title>16th Note Snare Permutations</title>
 
 	<style>
-		main {
-			max-width: 700px;
-			margin: 0 auto;
+	    @media (screen and (min-width: 350px)) {
+			main {
+				max-width: 300px;
+				margin: 0 auto;
+			}
+		}
+	    @media (screen and (min-width: 800px)) {
+			main {
+				max-width: 700px;
+				margin: 0 auto;
+			}
+		}
+		h1 {
+			font-family: Impact, sans-serif;
+			font-size: 20px;
+			color: #CE5937;
+		}
+		button {
+			font-family: sans-serif;
+		}
+		.label {
+			font-family: Impact, sans-serif;
+			font-size: 12px;
 		}
 		.row {
 			display: flex;
@@ -37,7 +57,10 @@
 	<script src="abcjs-basic.js" type="text/javascript"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 	<script type="text/javascript">
-	
+
+const mediaQuerySm = window.matchMedia('(min-width: 350px)');
+const mediaQueryLg = window.matchMedia('(min-width: 800px)');
+
 var abcRoot = "X:1\n"+
 "%%stretchlast 1\n" +
 "%%percmap D  pedal-hi-hat x\n" +
@@ -320,17 +343,23 @@ function load() {
 		cursorControl.onFinished();
 	}
 
+	var staffwidth = 250;
+	var minSpacingLimit = 250;
+	var preferredMeasures = 2;
+
+	if (mediaQueryLg.matches) {
+	    staffwidth = 500;
+		minSpacingLimit = 250;
+    	var preferredMeasures = 4;
+	}
+		
 	// First draw the music - this supplies an object that has a lot of information about how to create the synth.
 	// NOTE: If you want just the sound without showing the music, use "*" instead of "paper" in the renderAbc call.
 	visualObj = ABCJS.renderAbc("score", abc, { add_classes: true, oneSvgPerLine: true,
-		responsive: "wrap", staffwidth: 550, wrap: { minSpacing:1, maxSpacing:2.5, lastLineLimit: true, preferredMeasuresPerLine: 3 }, 
-		paddingbottom:0, paddingtop:0})[0];
+		responsive: "wrap", staffwidth: staffwidth, wrap: { minSpacing:1, maxSpacing:2.5, lastLineLimit: true, minSpacingLimit: minSpacingLimit,
+		preferredMeasuresPerLine: preferredMeasures }, 
+		paddingbottom:5, paddingtop:5})[0];
 
-	// Adjust staff separation to make score more compact
-	var paper = document.querySelector("#score");
-	paperHeight = Math.ceil(paper.getAttribute("height"))
-	paper.setAttribute("height",paperHeight)
-	console.log("Changed paper height")
 
 	// This object is the class that will contain the buffer
 	var midiBuffer;
@@ -414,22 +443,22 @@ $(document).ready(function(){
   <header>
   <h1>16th Note One Beat Permutations Combinations</h1>
   </header>
-    <div classs="container">
-	    Number of Bars: <input id="barCount" type="number" name="points" step="1" value="4" style="width:50px;"></input>
-		Metronome: <input id="metronome" type="checkbox" checked="true">
-		Style: <select id = "style">
+    <div class="container">
+	    <div><span class="label">Number of Bars:</span> <input id="barCount" type="number" name="points" step="1" value="4" style="width:50px;"></input></div>
+		<div><span class="label">Metronome:</span> <input id="metronome" type="checkbox" checked="true"></div>
+		<div><span class="label">Style:</span> <select id = "style">
 			<option>Pop&ampRock</option>
 			<option selected="selected">All</option>
-		</select>
+		</select></div>
     </div> 
-
+    </p>
 	<div class="container">
 		<div id="control"></div>
 		<div id="score"></div>
 		<p class="suspend-explanation"></p>
 		<div class="row">
 			<div>
-				<button class="activate-audio">Enable Player</button>
+			    <button class="activate-audio">Enable Player</button>
 				<div class='audio-error' style="display:none;">Audio is not supported in this browser.</div>
 			</div>
 			<div class="status" style="display:none;"></div>

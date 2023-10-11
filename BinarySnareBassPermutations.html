@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="abcjs-audio.css"/>
+
+	<link rel="icon" href="favicon.ico" type="image/x-icon"/>
+	<title>16th Note Snare Permutations</title>
+
+	<style>
+	    @media (screen and (min-width: 350px)) {
+			main {
+				max-width: 300px;
+				margin: 0 auto;
+			}
+		}
+	    @media (screen and (min-width: 600px)) {
+			main {
+				max-width: 500px;
+				margin: 0 auto;
+			}
+		}
+	    @media (screen and (min-width: 900px)) {
+			main {
+				max-width: 800px;
+				margin: 0 auto;
+			}
+		}
+		h1 {
+			font-family: Impact, sans-serif;
+			font-size: 20px;
+			color: #CE5937;
+		}
+		button {
+			font-family: sans-serif;
+		}
+		.label {
+			font-family: Impact, sans-serif;
+			font-size: 12px;
+		}
+		.row {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+		}
+		.status {
+			padding: 2px 10px 10px 10px;
+			background-color: #f0f0f0;
+			width:250px;
+		}
+        @media (prefers-color-scheme: dark) {
+            .status {
+                background-color: #000000;
+            }
+        }
+		.abcjs-highlight {
+		    color: #ff0040
+		}
+	</style>
+
+	<script src="abcjs-basic.js" type="text/javascript"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+	<script type="text/javascript">
+
+const mediaQuerySm = window.matchMedia('(min-width: 350px)');
+const mediaQueryLg = window.matchMedia('(min-width: 600px)');
+const mediaQueryXl = window.matchMedia('(min-width: 900px)');
+
+var abcRoot = "X:1\n"+
+"%%stretchlast 1\n" +
+"%%percmap D  pedal-hi-hat x\n" +
+"%%percmap F  bass-drum-1\n" +
+"%%percmap E  acoustic-bass-drum\n" +
+"%%percmap G  low-floor-tom\n" +
+"%%percmap A  high-floor-tom\n" +
+"%%percmap B  low-tom\n" +
+"%%percmap ^B tambourine   triangle\n" +
+"%%percmap c  acoustic-snare\n" +
+"%%percmap _c electric-snare\n" +
+"%%percmap ^c low-wood-block   triangle\n" +
+"%%percmap =c side-stick x\n"+
+"%%percmap d  low-tom\n" +
+"%%percmap =d  low-mid-tom harmonic\n" +
+"%%percmap ^d hi-wood-block    triangle\n" +
+"%%percmap e  hi-mid-tom\n" +
+"%%percmap ^e cowbell      triangle\n" +
+"%%percmap f  high-tom\n" +
+"%%percmap ^f ride-cymbal-1\n" +
+"%%percmap =f ride-bell harmonic\n" +
+"%%percmap g  closed-hi-hat x\n" +
+"%%percmap ^g open-hi-hat x\n" +
+"%%percmap a  crash-cymbal-1  x\n" +
+"%%percmap ^a open-triangle     triangle\n" +
+"Q:1/4=60\n"+
+"K:C perc\n"
+
+var dots= "\"1)\"c z z z|"+
+"\"2)\"z c z z|"+
+"\"3)\"z z c z|"+
+"\"4)\"z z z c|"+
+"\"5)\"c c z z|"+
+"\"6)\"c z c z|"+
+"\"7)\"c z z c|"+
+"\"8)\"z c c z|"+
+"\"9)\"z c z c|"+
+"\"10)\"z z c c|"+
+"\"11)\"c c c z|"+
+"\"12)\"c c z c|"+
+"\"13)\"c z c c|"+
+"\"14)\"z c c c|"+
+"\"15)\"c c c c|"
+
+var oneBar= "M:1/4\n"+"L:1/16\n"+"V:ALL stem=up\n"+
+"\"1)\"c4|\n"+
+"\"2)\"zc3|\n"+
+"\"3)\"z2c2|\n"+
+"\"4)\"z3c|"+
+"\"5)\"cc3|"+
+"\"6)\"c2c2|"+
+"\"7)\"c3c|"+
+"\"8)\"zcc2|"+
+"\"9)\"zc2c|"+
+"\"10)\"z2cc|"+
+"\"11)\"cccz|"+
+"\"12)\"cc2c|"+
+"\"13)\"c2cc|"+
+"\"14)\"zccc|"+
+"\"15)\"cccc|"
+
+var oneBeatAllBass= "\"1)\"" +
+"F2|\n"+
+"\"2)\"" +
+"z/F3/2|\n"+
+"\"3)\"" +
+"zF|\n"+
+"\"4)\"" +
+"z3/2F/|\n"+
+"\"5)\"" +
+"F/F/z|\n"+
+"\"6)\"" +
+"FF|\n "+
+"\"7)\"" +
+"F3/2F/|\n"+
+"\"8)\"" +
+"z/F/F|\n"+
+"\"9)\"" +
+"z/FF/|\n"+
+"\"10)\"" +
+"zF/F/|\n"+
+"\"11)\"" +
+"F/F/F|\n"+
+"\"12)\"" +
+"F/FF/|\n"+
+"\"13)\"" +
+"FF/F/|\n"+
+"\"14)\"" +
+"z/F/F/F/|\n"+
+"\"15)\"" +
+"F/F/F/F/|\n"
+
+var oneBeatAllSnare= "\"16)\"" +
+"c2|\n"+
+"\"17)\"" +
+"z/c3/2|\n"+
+"\"18)\"" +
+"zc|\n"+
+"\"19)\"" +
+"z3/2c/|\n"+
+"\"20)\"" +
+"c/c/z|\n"+
+"\"21)\"" +
+"cc|\n "+
+"\"22)\"" +
+"c3/2c/|\n"+
+"\"23)\"" +
+"z/c/c|\n"+
+"\"24)\"" +
+"z/cc/|\n"+
+"\"25)\"" +
+"zc/c/|\n"+
+"\"26)\"" +
+"c/c/c|\n"+
+"\"27)\"" +
+"c/cc/|\n"+
+"\"28)\"" +
+"cc/c/|\n"+
+"\"29)\"" +
+"z/c/c/c/|\n"+
+"\"30)\"" +
+"c/c/c/c/|\n"
+
+var oneBeatTwoNoteSnareBass= "\"31)\"" +
+"F/c/|\n"+
+"\"32)\"" +
+"c/F/|\n"+
+"\"33)\"" +
+"Fc|\n"+
+"\"34)\"" +
+"cF|\n"+
+"\"35)\"" +
+"F3/2c/|\n"+
+"\"36)\"" +
+"F3/2c/|\n "+
+"\"37)\"" +
+"z/F/c|\n"+
+"\"38)\"" +
+"z/c/F|\n"+
+"\"39)\"" +
+"z/Fc/|\n"+
+"\"40)\"" +
+"z/cF/|\n"+
+"\"41)\"" +
+"zF/c/|\n"+
+"\"42)\"" +
+"zc/F/|\n"
+
+var oneBeatThreeNoteSnareBass11= "\"43)\"" +
+"F/F/c|\n"+
+"\"44)\"" +
+"c/c/F|\n"+
+"\"45)\"" +
+"F/c/c|\n"
+"\"46)\"" +
+"c/F/F|\n"+
+"\"47)\"" +
+"F/c/F|\n"+
+"\"48)\"" +
+"c/F/c|\n"
+
+var oneBeatThreeNoteSnareBass12= "\"49)\"" +
+"F/Fc/|\n"+
+"\"50)\"" +
+"c/cF/|\n"+
+"\"51)\"" +
+"F/cc/|\n"+
+"\"52)\"" +
+"c/FF/|\n"+
+"\"53)\"" +
+"F/cF/|\n"+
+"\"54)\"" +
+"c/Fc/|\n"
+
+var oneBeatThreeNoteSnareBass13= "\"55)\"" +
+"FF/c/|\n"+
+"\"56)\"" +
+"cc/F/|\n"+
+"\"57)\"" +
+"Fc/c/|\n"+
+"\"58)\"" +
+"cF/F/|\n"+
+"\"59)\"" +
+"Fc/F/|\n"+
+"\"60)\"" +
+"cF/c/|\n"
+
+var oneBeatThreeNoteSnareBass14= "\"61)\"" +
+"z/F/F/c/|\n"+
+"\"62)\"" +
+"z/c/c/F/|\n"+
+"\"63)\"" +
+"z/F/c/c/|\n"+
+"\"64)\"" +
+"z/c/F/F/|\n"+
+"\"65)\"" +
+"z/F/c/F/|\n"+
+"\"66)\"" +
+"z/c/F/c/|\n"
+
+var oneBeatFourNoteSnareBass15= "\"67)\"" +
+"F/c/c/c/|\n"+
+"\"68)\"" +
+"c/F/c/c/|\n"+
+"\"69)\"" +
+"c/c/F/c/|\n"+
+"\"70)\"" +
+"c/c/c/F/|\n"+
+"\"71)\"" +
+"F/F/c/c/|\n"
+"\"72)\"" +
+"F/c/F/c/|\n"
+"\"73)\"" +
+"F/c/c/F/|\n"
+"\"74)\"" +
+"c/F/F/c/|\n"
+"\"75)\"" +
+"c/F/c/F/|\n"
+"\"76)\"" +
+"c/c/F/F/|\n"
+"\"77)\"" +
+"F/F/F/c/|\n"
+"\"78)\"" +
+"F/F/c/F/|\n"
+"\"79)\"" +
+"F/c/F/F/|\n"
+"\"80)\"" +
+"c/F/F/F/|\n"
+
+var oneBeatPopRock= "\"5)\"" +
+"c/c/z|\n"+
+"\"6)\"" +
+"cc|\n "+
+"\"10)\"" +
+"zc/c/|\n"+
+"\"11)\"" +
+"c/c/c|\n"+
+"\"13)\"" +
+"cc/c/|\n"+
+"\"15)\"" +
+"c/c/c/c/|\n"
+
+var snare= "\"1)\"" +
+"gg gg &"+
+"F2 c2|\n"+
+"\"2)\"" +
+"gg gg &"+
+"F2 z/c3/2|\n"+
+"\"3)\"" +
+"gg gg &"+
+"F2 zc|\n"+
+"\"4)\"" +
+"gg gg &"+
+"F2 z3/2c/|\n"+
+"\"5)\"" +
+"gg gg &"+
+"F2 c/c/z|\n"+
+"\"6)\"" +
+"gg gg &"+
+"F2 cc|\n "+
+"\"7)\"" +
+"gg gg &"+
+"F2 c3/2c/|\n"+
+"\"8)\"" +
+"gg gg &"+
+"F2 z/c/c|\n"+
+"\"9)\"" +
+"gg gg &"+
+"F2 z/cc/|\n"+
+"\"10)\"" +
+"gg gg &"+
+"F2 zc/c/|\n"+
+"\"11)\"" +
+"gg gg &"+
+"F2 c/c/c|\n"+
+"\"12)\"" +
+"gg gg &"+
+"F2 c/cc/|\n"+
+"\"13)\"" +
+"gg gg &"+
+"F2 cc/c/|\n"+
+"\"14)\"" +
+"gg gg &"+
+"F2 z/c/c/c/|\n"+
+"\"15)\"" +
+"gg gg &"+
+"F2 c/c/c/c/|\n"
+
+var abc80 = abcRoot + "M:1/4\n"+"L:1/8\n"
+
+function CursorControl(rootSelector) {
+	var self = this;
+
+	self.rootSelector = rootSelector; // This is the same selector as the renderAbc call uses.
+
+	self.removeSelection = function() {
+		// Unselect any previously selected notes.
+		var lastSelection = document.querySelectorAll(self.rootSelector + " .abcjs-highlight");
+		for (var k = 0; k < lastSelection.length; k++)
+			lastSelection[k].classList.remove("abcjs-highlight");
+	};
+
+	self.onFinished = function() {
+			self.removeSelection();
+	}
+
+	self.onEvent = function(ev) {
+
+		// This is called every time a note or a rest is reached and contains the coordinates of it.
+		if (ev.measureStart && ev.left === null)
+			return; // this was the second part of a tie across a measure line. Just ignore it.
+
+		self.removeSelection();
+
+		// Select the currently selected notes.
+		for (var i = 0; i < ev.elements.length; i++ ) {
+			var note = ev.elements[i];
+			for (var j = 0; j < note.length; j++) {
+				note[j].classList.add("abcjs-highlight");
+			}
+		}
+	};
+}
+
+var cursorControl = new CursorControl("#score");
+
+var metronome = "dddd 76 77 77 77 60 30 30 30";
+
+var visualObj = null;
+
+var audioOptions = {}
+
+function initAudio() {
+	var startAudioButton = document.querySelector(".activate-audio");
+	var explanationDiv = document.querySelector(".suspend-explanation");
+	var statusDiv = document.querySelector(".status");
+
+	startAudioButton.setAttribute("style", "display:none;");
+	explanationDiv.setAttribute("style", "opacity: 0;");
+	statusDiv.innerHTML = "<div>Testing browser</div>";
+	if (ABCJS.synth.supportsAudio()) {
+
+		// An audio context is needed - this can be passed in for two reasons:
+		// 1) So that you can share this audio context with other elements on your page.
+		// 2) So that you can create it during a user interaction so that the browser doesn't block the sound.
+		// Setting this is optional - if you don't set an audioContext, then abcjs will create one.
+		window.AudioContext = window.AudioContext ||
+			window.webkitAudioContext ||
+			navigator.mozAudioContext ||
+			navigator.msAudioContext;
+		var audioContext = new window.AudioContext();
+		audioContext.resume().then(function () {
+			statusDiv.innerHTML += "<div>AudioContext resumed</div>";
+			// In theory the AC shouldn't start suspended because it is being initialized in a click handler, but iOS seems to anyway.
+
+			// This does a bare minimum so this object could be created in advance, or whenever convenient.
+			midiBuffer = new ABCJS.synth.CreateSynth();
+
+			var synthControl = new ABCJS.synth.SynthController();
+			synthControl.load("#control",
+				cursorControl,
+				{
+					displayLoop: true,
+					displayRestart: true,
+					displayPlay: true,
+					displayProgress: false,
+					displayWarp: true,
+					displayClock: true
+				}
+			);
+			statusDiv.innerHTML = "<div>Controller loaded</div>";
+			synthControl.disable(true);
+
+			// midiBuffer.init preloads and caches all the notes needed. There may be significant network traffic here.
+			return midiBuffer.init({
+				visualObj: visualObj,
+				audioContext: audioContext,
+				millisecondsPerMeasure: visualObj.millisecondsPerMeasure(),
+				options: audioOptions
+			}).then(function (response) {
+				synthControl.setTune(visualObj, false, {
+					drum: metronome
+				  }).then(function () {
+					document.querySelector(".abcjs-inline-audio").classList.remove("disabled");
+					console.log("Audio successfully loaded.");
+					statusDiv.innerHTML += "<div>Audio object has been initialized</div>";
+					// console.log(response); // this contains the list of notes that were loaded.
+					// midiBuffer.prime actually builds the output buffer.
+				}).catch(function (error) {
+					console.warn("Audio problem:", error);
+				});
+				return midiBuffer.prime();
+			}).then(function (response) {
+				statusDiv.innerHTML += "<div>Audio object has been primed (" + response.duration + " seconds).</div>";
+				statusDiv.innerHTML += "<div>status = " + response.status + "</div>";
+				// At this point, everything slow has happened. midiBuffer.start will return very quickly and will start playing very quickly without lag.
+				//midiBuffer.start();
+				//statusDiv.innerHTML += "<div>Audio started</div>";
+				return Promise.resolve();
+			}).catch(function (error) {
+				if (error.status === "NotSupported") {
+					var audioError = document.querySelector(".audio-error");
+					audioError.setAttribute("style", "");
+				} else
+					console.warn("synth error", error);
+			});
+		});
+	} else {
+		var audioError = document.querySelector(".audio-error");
+		audioError.setAttribute("style", "");
+	}
+}
+
+function addOstinato(beats) {
+    result = "";
+	ostinatoBeat = getHHOstinato();
+	console.log(ostinatoBeat);
+    beats = beats.split("\n");
+	for (i=0;i<beats.length-1;i++) {
+	   beatParts = beats[i].split(")\"");
+	   console.log(beatParts[0]);
+	   console.log(beatParts[1]);
+	   newBeat = beatParts[0]+")\""+ostinatoBeat+" &"+beatParts[1]+"\n";
+	   console.log(newBeat);
+	   result = result + newBeat;
+	}
+	return result
+}
+
+function randomOneBeatPerms(beats,num) {
+   result = ""
+   perms = beats.split("\n")
+   // The list ends with a /n so it gets added when the last element is chosen too
+   total = perms.length-1
+   for (i=0;i<num;i++){
+      rand = Math.ceil(Math.random() * (total - 1) + 1)-1;
+      chosen = perms[rand]
+	  if (i>0)
+	    result = result+"\n"
+	  result = result + chosen
+   }
+   return result
+}
+
+function load() {
+
+	function onEvent(ev) {
+	  if (ev)
+		cursorControl.onEvent(ev);
+	  else
+		cursorControl.onFinished();
+	}
+
+	var staffwidth = 250;
+	var minSpacingLimit = 250;
+	var preferredMeasures = 2;
+
+	if (mediaQueryLg.matches) {
+	    staffwidth = 500;
+		minSpacingLimit = 250;
+    	var preferredMeasures = 4;
+	}
+
+	if (mediaQueryXl.matches) {
+	    staffwidth = 800;
+		minSpacingLimit = 250;
+    	var preferredMeasures = 8;
+	}
+	abcBeats= addOstinato(oneBeatAllBass + oneBeatAllSnare + oneBeatTwoNoteSnareBass + 
+            oneBeatThreeNoteSnareBass11 + oneBeatThreeNoteSnareBass12 + oneBeatThreeNoteSnareBass13 + oneBeatThreeNoteSnareBass14 +
+			oneBeatFourNoteSnareBass15);
+    seed = randomOneBeatPerms(abcBeats,$('#barCount').val());
+    abcComplete = abc80 + seed;
+	console.log(abc80);
+
+	// First draw the music - this supplies an object that has a lot of information about how to create the synth.
+	// NOTE: If you want just the sound without showing the music, use "*" instead of "paper" in the renderAbc call.
+	visualObj = ABCJS.renderAbc("score", abcComplete, { add_classes: true, oneSvgPerLine: true,
+		responsive: "wrap", staffwidth: staffwidth, wrap: { minSpacing:1, maxSpacing:2.5, lastLineLimit: true, 
+		preferredMeasuresPerLine: preferredMeasures }, 
+		paddingbottom:5, paddingtop:5})[0];
+
+
+	// This object is the class that will contain the buffer
+	var midiBuffer;
+
+	var startAudioButton = document.querySelector(".activate-audio");
+	var explanationDiv = document.querySelector(".suspend-explanation");
+	var statusDiv = document.querySelector(".status");
+
+	startAudioButton.addEventListener("click", initAudio);
+
+	function startTimer() {
+		var timingCallbacks = new ABCJS.TimingCallbacks(visualObj, {
+			eventCallback: onEvent,
+			extraMeasuresAtBeginning: 1,
+			beatSubdivisions: 4
+		});
+		timingCallbacks.start();
+	}
+	
+//	document.querySelector(".activate-audio").addEventListener("click", startTimer);
+}
+
+function getHHOstinato() {
+    selected = document.getElementById('ostinato').value;
+	
+	var beats = null
+	switch (selected) {
+	  case  "1":
+	    return "g2";
+	  case  "6":
+	    return "gg";
+	  case  "11":
+	    return "g/g/g";
+	  case  "13":
+	    return "gg/g/";
+	  case  "15":
+	    return "g/g/g/g/";
+    }
+}
+
+$(document).ready(function(){
+
+  $('#barCount').bind('keyup input', function(){
+	  const scoreDiv = document.getElementById("score");
+	  scoreDiv.innerHTML = "";
+	  load();
+  	  initAudio();
+  });
+  $("#metronome").change(function(e) {
+      if (document.getElementById('metronome').checked) {
+	     metronome = "dddd 76 77 77 77 60 30 30 30";
+	  } else  {
+	     metronome = "";
+	  }
+	  const scoreDiv = document.getElementById("score");
+	  scoreDiv.innerHTML = "";
+	  load();
+	  initAudio();
+  });
+  $("#ostinato").change(function(e) {
+    
+	const scoreDiv = document.getElementById("score");
+	scoreDiv.innerHTML = "";
+	load();
+    initAudio();
+  })
+});
+	</script>
+</head>
+<body onload="load()">
+<main>
+  <header>
+  <h1>16th Note One Beat Permutations Combinations</h1>
+  </header>
+    <div class="container">
+	    <div><span class="label">Number of Bars:</span> <input id="barCount" type="number" name="points" step="1" value="4" style="width:50px;"></input></div>
+		<div><span class="label">Metronome:</span> <input id="metronome" type="checkbox" checked="true"></div>
+		<div><span class="label">High Hat Ostinato:</span> <select id = "ostinato">
+			<option value="1">1 (X---)</option>
+			<option value="6" selected="selected">6 (X-X-)</option>
+			<option value="11">11 (XXX)</option>
+			<option value="13">13 (X-XX)</option>
+			<option value="15">15 (XXXX)</option>
+		</select></div>
+    </div> 
+    </p>
+	<div class="container">
+		<div id="control"></div>
+		<div id="score"></div>
+		<p class="suspend-explanation"></p>
+		<div class="row">
+			<div>
+			    <button class="activate-audio">Enable Player</button>
+				<div class='audio-error' style="display:none;">Audio is not supported in this browser.</div>
+			</div>
+			<div class="status" style="display:none;"></div>
+		</div>
+	</div>
+</main>
+</body>
+</html>

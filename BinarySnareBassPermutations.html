@@ -192,9 +192,9 @@ var oneBeatAllSnare= "\"16)\"" +
 "c/c/c/c/|\n"
 
 var oneBeatTwoNoteSnareBass= "\"31)\"" +
-"F/c/|\n"+
+"F/c3/2|\n"+
 "\"32)\"" +
-"c/F/|\n"+
+"c/F3/2|\n"+
 "\"33)\"" +
 "Fc|\n"+
 "\"34)\"" +
@@ -484,14 +484,10 @@ function initAudio() {
 function addOstinato(beats) {
     result = "";
 	ostinatoBeat = getHHOstinato();
-	console.log(ostinatoBeat);
     beats = beats.split("\n");
 	for (i=0;i<beats.length-1;i++) {
 	   beatParts = beats[i].split(")\"");
-	   console.log(beatParts[0]);
-	   console.log(beatParts[1]);
 	   newBeat = beatParts[0]+")\""+ostinatoBeat+" &"+beatParts[1]+"\n";
-	   console.log(newBeat);
 	   result = result + newBeat;
 	}
 	return result
@@ -541,7 +537,7 @@ function load() {
 			oneBeatFourNoteSnareBass15);
     seed = randomOneBeatPerms(abcBeats,$('#barCount').val());
     abcComplete = abc80 + seed;
-	console.log(abc80);
+	console.log(abc80+seed);
 
 	// First draw the music - this supplies an object that has a lot of information about how to create the synth.
 	// NOTE: If you want just the sound without showing the music, use "*" instead of "paper" in the renderAbc call.
